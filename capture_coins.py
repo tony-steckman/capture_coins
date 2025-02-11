@@ -37,7 +37,7 @@ class ArcadeGame(arcade.Window):
         self.all_sprites_list = arcade.SpriteList()
         self.game_over = False
         self.wolf_appeared = False
-        sprite_image = ASSETS_PATH / "images" / "alien_green_stand.png"
+        sprite_image = ASSETS_PATH / "images" / "hatman.png"
         self.player = arcade.Sprite(
             sprite_image, scale = 0.5
         )
@@ -47,16 +47,16 @@ class ArcadeGame(arcade.Window):
             function_pointer=self.add_coin, interval=self.coin_countdown
         )
         arcade.schedule(
-            function_pointer = self.move_wolf, interval=0.2
+            function_pointer = self.move_wolf, interval=0.1
         )
     
     def setup(self):
         """ Get the game ready to play """
         self.all_sprites_list = arcade.SpriteList()
         arcade.set_background_color(color=arcade.color.BROWN)
-        sprite_image = ASSETS_PATH / "images" / "alien_green_stand.png"
+        sprite_image = ASSETS_PATH / "images" / "hatman.png"
         self.player = arcade.Sprite(
-            sprite_image, scale = 0.5
+            sprite_image, scale = 0.75
         )
         self.player.center_x, self.player.center_y = WIDTH // 2, HEIGHT // 2
         self.all_sprites_list.append(self.player)
@@ -70,7 +70,6 @@ class ArcadeGame(arcade.Window):
             function_pointer = self.move_wolf, interval=0.2
         )
 
-
     def add_coin(self, dt: float):
         coin_image = ASSETS_PATH / "images" / "coin_gold.png"
         if not self.game_over:
@@ -81,7 +80,6 @@ class ArcadeGame(arcade.Window):
             new_coin.center_x, new_coin.center_y = randint(20, WIDTH - 20), randint(20, HEIGHT - 20),
             self.coins.append(new_coin)
             self.all_sprites_list.append(new_coin)
-            
             if len(self.coins) < 3:
                 self.coin_countdown -= self.coin_interval
                 if self.coin_countdown < 0.1:
@@ -104,7 +102,7 @@ class ArcadeGame(arcade.Window):
                 self.wolf.center_y = self.wolf.center_y + self.wolf_pace
             elif delta_x > 0:
                 self.wolf.center_y = self.wolf.center_y - self.wolf_pace
-            self.wolf_pace += 0.1
+            self.wolf_pace += 0.2
         elif self.coin_countdown < 1.5 and not self.wolf_appeared:
             self.wolf = arcade.Sprite(
                 wolf_image, scale = 1
@@ -133,28 +131,24 @@ class ArcadeGame(arcade.Window):
             self.score += COIN_VALUE
             arcade.play_sound(self.coin_pickup_sound)
             coin.remove_from_sprite_lists()
-        """
-        if len(self.coins) > COIN_COUNT:
-            arcade.unschedule(function_pointer=self.add_coin)
-            self.game_over = True
-        """
         if self.wolf_appeared:
             if self.wolf.collides_with_sprite(other=self.player):
                 arcade.unschedule(function_pointer=self.move_wolf)
                 self.game_over = True
 
     def on_draw(self):
-        status = f"Score: {self.score}"
-        if self.game_over:
-            status = f"GAME OVER - Score: {self.score}"
         self.clear()
-        #self.coins.draw()
-        #self.player.draw()
-        #if self.wolf_appeared:
-        #    self.wolf.draw()
+        if self.game_over:
+            arcade.draw_text(
+                "GAME OVER",
+                WIDTH // 2 - 250,
+                HEIGHT // 2 - 32,
+                arcade.color.GRAY,
+                64
+            )
         self.all_sprites_list.draw()
         arcade.draw_text(
-            status,
+            f"Score: {self.score}",
             50,
             50,
             arcade.color.BLACK,
