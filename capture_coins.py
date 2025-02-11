@@ -69,6 +69,13 @@ class ArcadeGame(arcade.Window):
         arcade.schedule(
             function_pointer = self.move_wolf, interval=0.2
         )
+        self.game_over_text = arcade.Text(
+            "GAME OVER",
+            WIDTH // 2 - 250,
+            HEIGHT // 2 - 32,
+            arcade.color.GRAY,
+            64
+        )
 
     def add_coin(self, dt: float):
         coin_image = ASSETS_PATH / "images" / "coin_gold.png"
@@ -82,7 +89,7 @@ class ArcadeGame(arcade.Window):
             self.all_sprites_list.append(new_coin)
             if len(self.coins) < 3:
                 self.coin_countdown -= self.coin_interval
-                if self.coin_countdown < 0.1:
+                if self.coin_countdown < 0.3:
                     self.coin_countdown = 0.3
                 arcade.unschedule(function_pointer=self.add_coin)
                 arcade.schedule(
@@ -121,7 +128,8 @@ class ArcadeGame(arcade.Window):
             self.player.center_y = y
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self.reset()
+        if self.game_over:
+            self.reset()
 
     def on_update(self, delta_time: float):
         coins_hit = arcade.check_for_collision_with_list(
@@ -139,21 +147,16 @@ class ArcadeGame(arcade.Window):
     def on_draw(self):
         self.clear()
         if self.game_over:
-            arcade.draw_text(
-                "GAME OVER",
-                WIDTH // 2 - 250,
-                HEIGHT // 2 - 32,
-                arcade.color.GRAY,
-                64
-            )
+            self.game_over_text.draw()
         self.all_sprites_list.draw()
-        arcade.draw_text(
+        self.score_text = arcade.Text(
             f"Score: {self.score}",
             50,
             50,
             arcade.color.BLACK,
             32
         )
+        self.score_text.draw()
 
 def main():
     arcade_game = ArcadeGame(WIDTH, HEIGHT, TITLE)
