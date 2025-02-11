@@ -39,7 +39,7 @@ class ArcadeGame(arcade.Window):
         self.wolf_appeared = False
         sprite_image = ASSETS_PATH / "images" / "hatman.png"
         self.player = arcade.Sprite(
-            sprite_image, scale = 0.5
+            sprite_image, scale = 0.75
         )
         self.player.center_x, self.player.center_y = WIDTH // 2, HEIGHT // 2
         self.all_sprites_list.append(self.player)
