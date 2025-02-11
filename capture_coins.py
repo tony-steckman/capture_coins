@@ -11,7 +11,6 @@ WIDTH = 800
 HEIGHT = 600
 TITLE = "Arcade Sample Game"
 ASSETS_PATH = Path.cwd() / "assets"
-COIN_COUNT = 10 #game ends with this number of coins on screen
 COIN_VALUE = 10
 
 class ArcadeGame(arcade.Window):
@@ -35,8 +34,15 @@ class ArcadeGame(arcade.Window):
         self.wolf_pace = 1
         self.score = 0
         self.coins = arcade.SpriteList()
+        self.all_sprites_list = arcade.SpriteList()
         self.game_over = False
         self.wolf_appeared = False
+        sprite_image = ASSETS_PATH / "images" / "alien_green_stand.png"
+        self.player = arcade.Sprite(
+            sprite_image, scale = 0.5
+        )
+        self.player.center_x, self.player.center_y = WIDTH // 2, HEIGHT // 2
+        self.all_sprites_list.append(self.player)
         arcade.schedule(
             function_pointer=self.add_coin, interval=self.coin_countdown
         )
@@ -46,12 +52,14 @@ class ArcadeGame(arcade.Window):
     
     def setup(self):
         """ Get the game ready to play """
+        self.all_sprites_list = arcade.SpriteList()
         arcade.set_background_color(color=arcade.color.BROWN)
         sprite_image = ASSETS_PATH / "images" / "alien_green_stand.png"
         self.player = arcade.Sprite(
-            filename=sprite_image, center_x=WIDTH // 2, center_y=HEIGHT // 2,
-            scale = 0.5,
+            sprite_image, scale = 0.5
         )
+        self.player.center_x, self.player.center_y = WIDTH // 2, HEIGHT // 2
+        self.all_sprites_list.append(self.player)
         arcade.schedule(
             function_pointer=self.add_coin, interval=self.coin_countdown
         )
@@ -67,12 +75,12 @@ class ArcadeGame(arcade.Window):
         coin_image = ASSETS_PATH / "images" / "coin_gold.png"
         if not self.game_over:
             new_coin = arcade.Sprite(
-                filename=coin_image,
-                center_x=randint(20, WIDTH - 20),
-                center_y=randint(20, HEIGHT - 20),
+                coin_image,
                 scale = 0.5
             )
+            new_coin.center_x, new_coin.center_y = randint(20, WIDTH - 20), randint(20, HEIGHT - 20),
             self.coins.append(new_coin)
+            self.all_sprites_list.append(new_coin)
             
             if len(self.coins) < 3:
                 self.coin_countdown -= self.coin_interval
@@ -99,19 +107,20 @@ class ArcadeGame(arcade.Window):
             self.wolf_pace += 0.1
         elif self.coin_countdown < 1.5 and not self.wolf_appeared:
             self.wolf = arcade.Sprite(
-                filename=wolf_image, center_x=WIDTH // 2, center_y=HEIGHT // 2, scale = 1,
+                wolf_image, scale = 1
             )
+            self.wolf.center_x, self.wolf.center_y = WIDTH // 2, HEIGHT // 2
+            self.all_sprites_list.append(self.wolf)
             self.wolf_appeared = True
         arcade.unschedule(function_pointer=self.move_wolf)
         arcade.schedule(
             function_pointer=self.move_wolf, interval=0.2
-        )
-            
+        ) 
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         if not self.game_over:
-            self.player.center_x = arcade.clamp(x, 0, WIDTH)
-            self.player.center_y = arcade.clamp(y, 0, HEIGHT)
+            self.player.center_x = x
+            self.player.center_y = y
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.reset()
@@ -138,17 +147,18 @@ class ArcadeGame(arcade.Window):
         status = f"Score: {self.score}"
         if self.game_over:
             status = f"GAME OVER - Score: {self.score}"
-        arcade.start_render()
-        self.coins.draw()
-        self.player.draw()
-        if self.wolf_appeared:
-            self.wolf.draw()
+        self.clear()
+        #self.coins.draw()
+        #self.player.draw()
+        #if self.wolf_appeared:
+        #    self.wolf.draw()
+        self.all_sprites_list.draw()
         arcade.draw_text(
-            text=status,
-            start_x=50,
-            start_y=50,
-            font_size=32,
-            color=arcade.color.BLACK
+            status,
+            50,
+            50,
+            arcade.color.BLACK,
+            32
         )
 
 def main():
