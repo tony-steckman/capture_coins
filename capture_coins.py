@@ -102,8 +102,8 @@ class ArcadeGame(arcade.Window):
             self.all_sprites_list.append(new_coin)
             if len(self.coins) < 3:
                 self.coin_countdown -= self.coin_interval
-                if self.coin_countdown < 0.3:
-                    self.coin_countdown = 0.3
+                if self.coin_countdown < 0.5:
+                    self.coin_countdown = 0.5
                 arcade.unschedule(function_pointer=self.add_coin)
                 arcade.schedule(
                     function_pointer=self.add_coin, interval=self.coin_countdown
@@ -154,6 +154,7 @@ class ArcadeGame(arcade.Window):
             coin.remove_from_sprite_lists()
         if len(self.coins) >= COIN_COUNT:
             arcade.unschedule(function_pointer=self.add_coin)
+            arcade.unschedule(function_pointer=self.move_wolf)
             self.game_over = True
             if not self.chimed:
                 arcade.play_sound(self.game_over_sound)
@@ -164,8 +165,7 @@ class ArcadeGame(arcade.Window):
                 self.game_over = True
                 if not self.howled:
                     arcade.play_sound(self.wolf_howl_sound)
-                    self.howled = True
-                
+                    self.howled = True      
 
     def on_draw(self):
         self.clear()
