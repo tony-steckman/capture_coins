@@ -12,6 +12,7 @@ HEIGHT = 600
 TITLE = "Arcade Sample Game"
 ASSETS_PATH = Path.cwd() / "assets"
 COIN_VALUE = 10
+COIN_COUNT = 10
 
 class ArcadeGame(arcade.Window):
     """ The Arcade Game class """
@@ -28,6 +29,8 @@ class ArcadeGame(arcade.Window):
         self.set_mouse_visible(False)
         self.game_over = False
         self.wolf_appeared = False
+        self.howled = False
+        self.chimed = False
 
     def reset(self):
         self.coin_countdown = 2.5
@@ -37,6 +40,8 @@ class ArcadeGame(arcade.Window):
         self.all_sprites_list = arcade.SpriteList()
         self.game_over = False
         self.wolf_appeared = False
+        self.howled = False
+        self.chimed = False
         sprite_image = ASSETS_PATH / "images" / "hatman.png"
         self.player = arcade.Sprite(
             sprite_image, scale = 0.75
@@ -65,6 +70,14 @@ class ArcadeGame(arcade.Window):
         )
         self.coin_pickup_sound = arcade.load_sound(
             ASSETS_PATH / "sounds" / "coin_pickup.wav"
+        )
+        self.wolf_howl_sound = arcade.Sound(
+            ASSETS_PATH / "sounds" / "wolf_howl.mp3",
+            streaming = True
+        )
+        self.game_over_sound = arcade.Sound(
+            ASSETS_PATH / "sounds" / "game_over.mp3",
+            streaming = True
         )
         arcade.schedule(
             function_pointer = self.move_wolf, interval=0.2
@@ -139,10 +152,20 @@ class ArcadeGame(arcade.Window):
             self.score += COIN_VALUE
             arcade.play_sound(self.coin_pickup_sound)
             coin.remove_from_sprite_lists()
+        if len(self.coins) >= COIN_COUNT:
+            arcade.unschedule(function_pointer=self.add_coin)
+            self.game_over = True
+            if not self.chimed:
+                arcade.play_sound(self.game_over_sound)
+                self.chimed = True
         if self.wolf_appeared:
             if self.wolf.collides_with_sprite(other=self.player):
                 arcade.unschedule(function_pointer=self.move_wolf)
                 self.game_over = True
+                if not self.howled:
+                    arcade.play_sound(self.wolf_howl_sound)
+                    self.howled = True
+                
 
     def on_draw(self):
         self.clear()
