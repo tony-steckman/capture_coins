@@ -31,8 +31,10 @@ class ArcadeGame(arcade.Window):
         self.wolf_appeared = False
         self.howled = False
         self.chimed = False
+        self.high_score = 0
 
     def reset(self):
+        self.last_score = self.score
         self.coin_countdown = 2.5
         self.wolf_pace = 1
         self.score = 0
@@ -53,6 +55,15 @@ class ArcadeGame(arcade.Window):
         )
         arcade.schedule(
             function_pointer = self.move_wolf, interval=0.1
+        )
+        if self.last_score > self.high_score:
+            self.high_score = self.last_score
+        self.high_score_text = arcade.Text(
+            f"High Score: {self.high_score}",
+            WIDTH - 400,
+            50,
+            arcade.color.BLACK,
+            32
         )
     
     def setup(self):
@@ -84,7 +95,7 @@ class ArcadeGame(arcade.Window):
         )
         self.game_over_text = arcade.Text(
             "GAME OVER",
-            WIDTH // 2 - 250,
+            WIDTH // 2 - 275,
             HEIGHT // 2 - 32,
             arcade.color.GRAY,
             64
@@ -171,6 +182,8 @@ class ArcadeGame(arcade.Window):
         self.clear()
         if self.game_over:
             self.game_over_text.draw()
+        if self.high_score > 0:
+            self.high_score_text.draw()
         self.all_sprites_list.draw()
         self.score_text = arcade.Text(
             f"Score: {self.score}",
@@ -179,6 +192,8 @@ class ArcadeGame(arcade.Window):
             arcade.color.BLACK,
             32
         )
+        if self.high_score > 0:
+            self.high_score_text.draw()
         self.score_text.draw()
 
 def main():
