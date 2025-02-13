@@ -9,7 +9,7 @@ from pathlib import Path
 
 WIDTH = 800
 HEIGHT = 600
-TITLE = "Arcade Sample Game"
+TITLE = "Hatman Coin Collector"
 ASSETS_PATH = Path.cwd() / "assets"
 COIN_VALUE = 10
 COIN_COUNT = 10
