@@ -4,8 +4,10 @@ https://realpython.com/top-python-game-engines/
 """
 
 import arcade
-from random import randint
+import os
 from pathlib import Path
+from random import randint
+import sys
 
 WIDTH = 800
 HEIGHT = 600
@@ -13,6 +15,14 @@ TITLE = "Hatman Coin Collector"
 ASSETS_PATH = Path.cwd() / "assets"
 COIN_VALUE = 10
 COIN_COUNT = 10
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class ArcadeGame(arcade.Window):
     """ The Arcade Game class """
@@ -44,7 +54,7 @@ class ArcadeGame(arcade.Window):
         self.wolf_appeared = False
         self.howled = False
         self.chimed = False
-        sprite_image = ASSETS_PATH / "images" / "hatman.png"
+        sprite_image = resource_path(ASSETS_PATH / "images" / "hatman.png")
         self.player = arcade.Sprite(
             sprite_image, scale = 0.75
         )
@@ -70,7 +80,7 @@ class ArcadeGame(arcade.Window):
         """ Get the game ready to play """
         self.all_sprites_list = arcade.SpriteList()
         arcade.set_background_color(color=arcade.color.BROWN)
-        sprite_image = ASSETS_PATH / "images" / "hatman.png"
+        sprite_image = resource_path(ASSETS_PATH / "images" / "hatman.png")
         self.player = arcade.Sprite(
             sprite_image, scale = 0.75
         )
@@ -83,11 +93,11 @@ class ArcadeGame(arcade.Window):
             ASSETS_PATH / "sounds" / "coin_pickup.wav"
         )
         self.wolf_howl_sound = arcade.Sound(
-            ASSETS_PATH / "sounds" / "wolf_howl.mp3",
+            resource_path(ASSETS_PATH / "sounds" / "wolf_howl.mp3"),
             streaming = True
         )
         self.game_over_sound = arcade.Sound(
-            ASSETS_PATH / "sounds" / "game_over.mp3",
+            resource_path(ASSETS_PATH / "sounds" / "game_over.mp3"),
             streaming = True
         )
         arcade.schedule(
@@ -102,7 +112,7 @@ class ArcadeGame(arcade.Window):
         )
 
     def add_coin(self, dt: float):
-        coin_image = ASSETS_PATH / "images" / "coin_gold.png"
+        coin_image = resource_path(ASSETS_PATH / "images" / "coin_gold.png")
         if not self.game_over:
             new_coin = arcade.Sprite(
                 coin_image,
@@ -121,7 +131,7 @@ class ArcadeGame(arcade.Window):
                 )
 
     def move_wolf(self, dt:float):
-        wolf_image = ASSETS_PATH / "images" / "howl.png"
+        wolf_image = resource_path(ASSETS_PATH / "images" / "howl.png")
         if self.wolf_appeared:
             delta_x = self.wolf.center_x - self.player.center_x
             delta_y = self.wolf.center_y - self.player.center_y
