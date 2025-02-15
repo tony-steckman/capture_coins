@@ -88,7 +88,7 @@ class ArcadeGame(arcade.Window):
             function_pointer=self.add_coin, interval=self.coin_countdown
         )
         self.coin_pickup_sound = arcade.load_sound(
-            "assets/sounds/coin_pickup.wav"
+            resource_path("assets/sounds/coin_pickup.wav")
         )
         self.wolf_howl_sound = arcade.Sound(
             resource_path("assets/sounds/wolf_howl.mp3"),
