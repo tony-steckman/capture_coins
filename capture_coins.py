@@ -103,10 +103,12 @@ class ArcadeGame(arcade.Window):
         )
         self.game_over_text = arcade.Text(
             "GAME OVER",
-            WIDTH // 2 - 275,
+            0,
             HEIGHT // 2 - 32,
             arcade.color.GRAY,
-            64
+            64,
+            WIDTH,
+            'center'
         )
 
     def add_coin(self, dt: float):
